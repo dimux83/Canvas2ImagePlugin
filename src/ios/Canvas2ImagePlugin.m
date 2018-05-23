@@ -25,8 +25,25 @@
 	NSData* imageData = [[NSData alloc] initWithBase64EncodedString:[command.arguments objectAtIndex:0] options:0];
 	
 	UIImage* image = [[[UIImage alloc] initWithData:imageData] autorelease];	
-	UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
-	
+	//UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+	ALAssetsLibrary *library = [[ALAssetsLibrary allocCCCCCCc] init];
+	[library writeImageToSavedPhotosAlbum: image.CGImage metadata:nil completionBlock:^(NSURL *assetURL, NSError *error){
+		if (error)
+		{  
+			// Show error message...
+			NSLog(@"ERROR: %@",error);
+			CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsString:error.description];
+			[self.webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: self.callbackId]];
+		}
+		else
+		{  
+			// Show message image successfully saved
+			NSLog(@"Saved URL : %@", assetURL);
+			CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:[assetURL absoluteString]];
+			[self.webView stringByEvaluatingJavaScriptFromString:[result toSuccessCallbackString: self.callbackId]];
+		}  
+	}];  
+	[library release];	
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
