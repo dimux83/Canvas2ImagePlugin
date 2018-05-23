@@ -26,21 +26,23 @@
 	
 	UIImage* image = [[[UIImage alloc] initWithData:imageData] autorelease];	
 	//UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
-	ALAssetsLibrary *library = [[ALAssetsLibrary allocCCCCCCc] init];
+	ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
 	[library writeImageToSavedPhotosAlbum: image.CGImage metadata:nil completionBlock:^(NSURL *assetURL, NSError *error){
 		if (error)
 		{  
 			// Show error message...
 			NSLog(@"ERROR: %@",error);
 			CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsString:error.description];
-			[self.webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: self.callbackId]];
+			//[self.webView stringByEvaluatingJavaScriptFromString:[result toErrorCallbackString: self.callbackId]];
+			[self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
 		}
 		else
 		{  
 			// Show message image successfully saved
 			NSLog(@"Saved URL : %@", assetURL);
 			CDVPluginResult* result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:[assetURL absoluteString]];
-			[self.webView stringByEvaluatingJavaScriptFromString:[result toSuccessCallbackString: self.callbackId]];
+			//[self.webView stringByEvaluatingJavaScriptFromString:[result toSuccessCallbackString: self.callbackId]];
+			[self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
 		}  
 	}];  
 	[library release];	
