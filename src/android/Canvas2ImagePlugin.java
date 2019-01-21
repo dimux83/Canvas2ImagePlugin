@@ -50,7 +50,7 @@ public class Canvas2ImagePlugin extends CordovaPlugin {
 			} else {
 				
 				// Save the image
-				File imageFile = savePhoto(bmp);
+				File imageFile = savePhoto(bmp, callbackContext);
 				if (imageFile == null)
 					callbackContext.error("Error while saving image");
 				
@@ -66,7 +66,7 @@ public class Canvas2ImagePlugin extends CordovaPlugin {
 		}
 	}
 
-	private File savePhoto(Bitmap bmp) {
+	private File savePhoto(Bitmap bmp,CallbackContext callbackContext) {
 		File retVal = null;
 		
 		try {
@@ -110,6 +110,7 @@ public class Canvas2ImagePlugin extends CordovaPlugin {
 		} catch (Exception e) {
 			Log.e("Canvas2ImagePlugin", "An exception occured while saving image: "
 					+ e.toString());
+			callbackContext.error(e.getMessage());
 		}
 		return retVal;
 	}
